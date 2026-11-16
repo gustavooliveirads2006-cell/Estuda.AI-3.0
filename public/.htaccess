@@ -1,0 +1,41 @@
+# Configuração Hostinger - Kit com +100 Ferramentas de IA
+DirectoryIndex index.html
+
+Options -Indexes
+
+# SPA Rewrite: Redireciona rotas para index.html
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.html [L]
+</IfModule>
+
+# CONTROLE DE CACHE CRÍTICO:
+# 1. Impede cache do index.html e index.php para que toda atualização apareça IMEDIATAMENTE
+<FilesMatch "\.(html|htm|php)$">
+  <IfModule mod_headers.c>
+    Header set Cache-Control "no-cache, no-store, must-revalidate, max-age=0"
+    Header set Pragma "no-cache"
+    Header set Expires "0"
+  </IfModule>
+</FilesMatch>
+
+# 2. Cache curto para recursos públicos com nomes estáveis.
+<FilesMatch "\.(js|css|webp|png|jpg|jpeg|gif|svg|woff|woff2|ttf)$">
+  <IfModule mod_headers.c>
+    Header set Cache-Control "public, max-age=86400"
+  </IfModule>
+</FilesMatch>
+
+# Bundles gerados pelo Vite têm hash no nome e podem ficar em cache longo.
+<FilesMatch "-[A-Za-z0-9_-]{8,}\.(js|css|webp|png|jpg|jpeg)$">
+  <IfModule mod_headers.c>
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </IfModule>
+</FilesMatch>
+
+# Força charset UTF-8
+AddDefaultCharset UTF-8
